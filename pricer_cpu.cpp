@@ -11,7 +11,7 @@ int main() {
     const double r = 0.05;
     const double sigma = 0.20;
     const double T = 1.0;
-    const long long N = 1LL << 20;
+    const long long N = 1LL << 24;
 
     // TODO: set up the random generator and normal distribution
 
@@ -53,7 +53,7 @@ int main() {
 
     // TODO: prdouble price, SE, time in ms
 
-    double ms = std::chrono::duration<double, std::milli>(end - start).count();
+    double ms = chrono::duration<double, milli>(end - start).count();
     printf("Mean: : %.4f, Variace : %.4f, SE %.4f, Time %.4f\n", mean, variance, SE, ms);
 
     return 0;
