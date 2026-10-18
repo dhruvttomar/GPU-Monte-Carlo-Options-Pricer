@@ -15,7 +15,6 @@ __global__ void price_kernel(double* d_partials, double* d_partials_sq, int N,
     int t = threadIdx.x;
     int i = blockIdx.x * blockDim.x + t;
 
-    // TODO: compute this thread's payoff (same as Stage 2) if i < N, else payoff = 0
     double payoff = 0; 
     curandStatePhilox4_32_10_t state; 
     curand_init(seed, i, 0, &state);
@@ -32,11 +31,7 @@ __global__ void price_kernel(double* d_partials, double* d_partials_sq, int N,
 
     tile[t] = my_sum; 
     tile_sq[t] = my_sum_sq; 
-    // TODO: __syncthreads()
     __syncthreads();
-    // TODO: tree loop: stride starts at 128 and halves down to 1
-    //       if t < stride, fold the back half into the front half (both arrays)
-    //       __syncthreads() after each step
     for (int stride = 128; stride> 16; stride/= 2){
         if (t < stride){
             tile[t] += tile[t + stride];
@@ -57,7 +52,6 @@ __global__ void price_kernel(double* d_partials, double* d_partials_sq, int N,
             d_partials_sq[blockIdx.x] = s2;
         }
     }
-    // TODO: thread 0 writes tile[0] and tile_sq[0] to slot blockIdx.x of the outputs
 }
 
 int main() {
@@ -67,7 +61,7 @@ int main() {
     const double sigma = 0.20;
     const double T = 1.0;
     const int N = 1 << 20;
-    int block_count = 64;
+    int block_count = 157;
 
     size_t part_bytes = block_count * sizeof(double);
 
